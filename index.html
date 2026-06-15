@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="matrix">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shivankar Pandey — SAP Professional & Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+[data-theme="matrix"]{
+  --bg:#000000;--bg2:#020a02;--surface:#050f05;--surface2:#071207;
+  --border:rgba(0,255,65,0.12);--border-h:rgba(0,255,65,0.35);
+  --accent:#00ff41;--accent2:#00cc33;--accent3:#00ff41;
+  --text:#e8ffe8;--text-dim:#7acc7a;--muted:#00cc44;--card:#040d04;
+  --glow:0 0 20px rgba(0,255,65,0.15);
+  --font-display:'Share Tech Mono',monospace;--font-body:'Share Tech Mono',monospace;
+}
+[data-theme="void"]{
+  --bg:#ffffff;--bg2:#f8f8f8;--surface:#f0f0f0;--surface2:#e8e8e8;
+  --border:rgba(0,0,0,0.1);--border-h:rgba(0,0,0,0.4);
+  --accent:#000000;--accent2:#333333;--accent3:#666666;
+  --text:#000000;--text-dim:#333333;--muted:#555555;--card:#f5f5f5;
+  --glow:0 0 20px rgba(0,0,0,0.08);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+}
+[data-theme="void2"]{
+  --bg:#050505;--bg2:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;
+  --border:rgba(255,255,255,0.07);--border-h:rgba(255,255,255,0.3);
+  --accent:#ffffff;--accent2:#cccccc;--accent3:#999999;
+  --text:#eeeeee;--text-dim:#aaaaaa;--muted:#666666;--card:#0f0f0f;
+  --glow:0 0 20px rgba(255,255,255,0.05);
+  --font-display:'Space Grotesk',sans-serif;--font-body:'Inter',sans-serif;
+}
+
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden;cursor:none;transition:background 0.4s,color 0.4s;font-size:18px;}
+
+#cur{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform 0.1s,background 0.4s;}
+#cur-r{width:30px;height:30px;border:1px solid var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;opacity:0.5;transition:background 0.4s,border-color 0.4s;}
+
+#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;transition:opacity 0.5s;}
+[data-theme="void"] #matrix-canvas,[data-theme="void2"] #matrix-canvas{opacity:0;}
+[data-theme="matrix"] #matrix-canvas{opacity:1;}
+
+#matrix-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;background:rgba(0,0,0,0.72);transition:opacity 0.5s;}
+[data-theme="void"] #matrix-overlay,[data-theme="void2"] #matrix-overlay{opacity:0;}
+[data-theme="matrix"] #matrix-overlay{opacity:1;}
+
+#star-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;transition:opacity 0.5s;}
+[data-theme="matrix"] #star-canvas,[data-theme="void"] #star-canvas{opacity:0;}
+[data-theme="void2"] #star-canvas{opacity:1;}
+
+/* Theme dropdown */
+.theme-toggle{position:fixed;top:1.1rem;right:1.5rem;z-index:200;display:flex;align-items:center;gap:0.5rem;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:0.4rem 1rem;cursor:none;transition:all 0.3s;font-size:0.78rem;font-weight:600;color:var(--text-dim);letter-spacing:0.05em;user-select:none;}
+.theme-toggle:hover{border-color:var(--border-h);}
+.toggle-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);transition:background 0.4s;}
+.theme-dropdown{position:fixed;top:3.4rem;right:1.5rem;z-index:201;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-width:170px;box-shadow:0 8px 24px rgba(0,0,0,0.4);display:none;flex-direction:column;}
+.theme-dropdown.open{display:flex;}
+.theme-opt{display:flex;align-items:center;gap:0.6rem;padding:0.7rem 1.1rem;font-size:0.78rem;font-weight:600;color:var(--text-dim);letter-spacing:0.05em;cursor:none;transition:all 0.2s;border-bottom:1px solid var(--border);}
+.theme-opt:last-child{border-bottom:none;}
+.theme-opt:hover{background:var(--surface);color:var(--accent);}
+.theme-opt.active{color:var(--accent);}
+.theme-opt .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot-matrix{background:#00ff41;}
+.dot-void{background:#000;border:1px solid #ccc;}
+.dot-void2{background:#fff;border:1px solid #555;}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 0;background:rgba(0,0,0,0.75);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background 0.4s,border-color 0.4s;}
+[data-theme="void"] nav{background:rgba(255,255,255,0.9);}
+[data-theme="void2"] nav{background:rgba(5,5,5,0.88);}
+.nav-in{max-width:1100px;margin:0 auto;padding:0 2.5rem;display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:var(--font-display);font-weight:700;font-size:1.2rem;color:var(--accent);text-decoration:none;display:flex;align-items:center;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.98rem;font-weight:600;transition:color 0.2s;letter-spacing:0.06em;}
+.nav-links a:hover{color:var(--accent);}
+
+/* Layout */
+.container{max-width:1100px;margin:0 auto;padding:0 2.5rem;position:relative;z-index:2;}
+section{padding:5rem 0;position:relative;z-index:2;}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:6rem 0 3rem;position:relative;overflow:hidden;}
+.hero-grid{display:grid;grid-template-columns:1fr 420px;gap:3rem;align-items:center;}
+
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:transparent;border:1px solid var(--border);border-radius:4px;padding:0.35rem 1rem;font-size:0.78rem;color:var(--accent2);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1.5rem;}
+.hero-badge .blink{animation:blink 1s infinite;color:var(--accent);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.hero-name{font-family:var(--font-display);font-size:clamp(3.2rem,6vw,5.5rem);font-weight:700;line-height:1.0;letter-spacing:-0.02em;color:var(--text);margin-bottom:0.9rem;}
+[data-theme="matrix"] .hero-name{text-shadow:0 0 30px rgba(0,255,65,0.4);}
+
+.hero-dual{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.4rem;}
+.dual-row{display:flex;align-items:center;gap:0.7rem;font-size:0.92rem;color:var(--muted);}
+.dual-row .tag{color:var(--accent);font-weight:700;font-size:0.9rem;}
+
+.hero-type{font-size:1.05rem;color:var(--muted);margin-bottom:1.6rem;min-height:1.8rem;font-family:var(--font-display);}
+.hero-type .t{color:var(--accent2);}
+.hero-type .bl{display:inline-block;width:2px;height:0.9em;background:var(--accent);margin-left:2px;vertical-align:middle;animation:blink 1s infinite;}
+
+.hero-desc{color:var(--muted);font-size:1.1rem;line-height:1.9;max-width:500px;margin-bottom:2.2rem;}
+
+.hero-btns{display:flex;gap:0.9rem;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.6rem;border-radius:4px;font-size:0.9rem;font-weight:700;text-decoration:none;transition:all 0.25s;cursor:none;font-family:var(--font-display);letter-spacing:0.05em;}
+.btn-p{background:var(--accent);color:#000;}
+.btn-p:hover{opacity:0.85;transform:translateY(-2px);box-shadow:var(--glow);}
+
+.sphere-wrap{position:relative;display:flex;align-items:center;justify-content:center;height:420px;}
+#sphere-canvas{position:absolute;}
+
+.scroll-h{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.4rem;color:var(--muted);font-size:0.7rem;letter-spacing:0.12em;animation:bob 2.5s ease-in-out infinite;}
+.scroll-h .ln{width:1px;height:36px;background:linear-gradient(to bottom,var(--accent),transparent);}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* Section */
+.s-label{font-size:0.72rem;letter-spacing:0.18em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:0.6rem;font-family:var(--font-display);}
+.s-title{font-family:var(--font-display);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:700;letter-spacing:-0.01em;line-height:1.15;margin-bottom:2.8rem;color:var(--text);}
+[data-theme="matrix"] .s-title{text-shadow:0 0 20px rgba(0,255,65,0.2);}
+/* typing cursor for section titles */
+.s-title .tcursor{display:inline-block;width:3px;height:0.85em;background:var(--accent);margin-left:3px;vertical-align:middle;animation:blink 1s infinite;}
+/* hide static text before JS types it */
+.s-title[data-type]{color:transparent;}
+.s-title[data-type] .tcursor{color:transparent;background:var(--accent);}
+.s-title[data-type]._ready{color:var(--text);}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.1rem;margin-bottom:4rem;}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.5rem 1.2rem;text-align:center;transition:border-color 0.3s,transform 0.3s,box-shadow 0.3s;}
+.s-card:hover{border-color:var(--border-h);transform:translateY(-3px);box-shadow:var(--glow);}
+.s-num{font-family:var(--font-display);font-size:2.2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:0.4rem;}
+.s-lbl{font-size:0.74rem;color:var(--muted);font-weight:600;letter-spacing:0.05em;}
+
+/* About */
+.about-g{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;}
+.about-g p{color:var(--muted);margin-bottom:1rem;line-height:1.9;font-size:1.1rem;}
+.hi-list{display:flex;flex-direction:column;gap:0.7rem;}
+.hi{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem 1.3rem;display:flex;align-items:flex-start;gap:0.9rem;transition:border-color 0.3s,transform 0.3s;}
+.hi:hover{border-color:var(--border-h);transform:translateX(4px);box-shadow:var(--glow);}
+.hi-t{font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:0.15rem;}
+.hi-d{font-size:0.95rem;color:var(--muted);}
+
+/* Experience */
+.exp-list{display:flex;flex-direction:column;gap:1.2rem;}
+.exp-c{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;opacity:0;transform:translateY(16px);transition:border-color 0.3s,transform 0.35s,box-shadow 0.3s;}
+.exp-c.vis{opacity:1;transform:translateY(0);}
+.exp-c:hover{border-color:var(--border-h);transform:translateY(-3px);box-shadow:var(--glow);}
+.exp-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.1rem;flex-wrap:wrap;gap:0.5rem;}
+.exp-role{font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:var(--accent);}
+.exp-co{font-size:1rem;color:var(--muted);margin-top:0.15rem;}
+.exp-date{font-size:0.85rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0.25rem 0.75rem;white-space:nowrap;}
+.exp-ul{list-style:none;display:flex;flex-direction:column;gap:0.55rem;}
+.exp-ul li{font-size:1rem;color:var(--muted);line-height:1.8;padding-left:1.2rem;position:relative;}
+.exp-ul li::before{content:'>';position:absolute;left:0;top:0;color:var(--accent);font-family:var(--font-display);}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--surface2);padding:0.85rem 1.1rem;text-align:left;font-size:0.88rem;letter-spacing:0.08em;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);font-family:var(--font-display);}
+td{padding:0.85rem 1.1rem;font-size:1rem;color:var(--muted);border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface);color:var(--text);}
+td:first-child{color:var(--accent);font-weight:700;}
+.tc{font-family:var(--font-display);font-size:0.78rem;color:var(--accent);background:var(--surface2);padding:0.12rem 0.35rem;border-radius:3px;border:1px solid var(--border);}
+
+/* Skills */
+.sk-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;}
+.sk-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.3rem;opacity:0;transform:translateY(14px);transition:border-color 0.3s,transform 0.3s;}
+.sk-group.vis{opacity:1;transform:translateY(0);}
+.sk-group:hover{border-color:var(--border-h);transform:translateY(-3px);box-shadow:var(--glow);}
+.sk-gtitle{font-size:0.82rem;letter-spacing:0.1em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:0.9rem;font-family:var(--font-display);}
+.sk-tags{display:flex;flex-wrap:wrap;gap:0.4rem;}
+.sk-tag{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:0.3rem 0.7rem;font-size:0.9rem;color:var(--text-dim);font-weight:500;}
+
+/* Achievements */
+.ach-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;}
+.ach-c{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.6rem;opacity:0;transform:translateY(14px);transition:border-color 0.3s,transform 0.3s;}
+.ach-c.vis{opacity:1;transform:translateY(0);}
+.ach-c:hover{border-color:var(--border-h);transform:translateY(-4px);box-shadow:var(--glow);}
+.ach-m{font-family:var(--font-display);font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:0.5rem;}
+.ach-t{font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:0.35rem;}
+.ach-d{font-size:0.92rem;color:var(--muted);line-height:1.65;}
+
+/* Education */
+.edu-l{display:flex;flex-direction:column;gap:0.8rem;}
+.edu-i{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;transition:border-color 0.3s;}
+.edu-i:hover{border-color:var(--border-h);}
+.edu-deg{font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:0.15rem;}
+.edu-inst{font-size:0.92rem;color:var(--accent2);}
+.edu-yr{font-size:0.85rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0.22rem 0.75rem;white-space:nowrap;}
+
+/* Contact */
+.ct-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3rem;text-align:center;}
+.ct-wrap p{color:var(--muted);max-width:480px;margin:0 auto 1.8rem;font-size:1.1rem;line-height:1.85;}
+.ct-links{display:flex;justify-content:center;gap:0.75rem;flex-wrap:wrap;}
+.ct-a{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.2rem;border-radius:4px;font-size:0.86rem;font-weight:700;text-decoration:none;border:1px solid var(--border);color:var(--text);transition:all 0.25s;cursor:none;font-family:var(--font-display);letter-spacing:0.04em;}
+.ct-a:hover{border-color:var(--border-h);color:var(--accent);transform:translateY(-2px);box-shadow:var(--glow);}
+
+footer{padding:1.8rem 0;text-align:center;font-size:0.75rem;color:var(--muted);position:relative;z-index:2;border-top:1px solid var(--border);font-family:var(--font-display);}
+
+.fade{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease;}
+.fade.vis{opacity:1;transform:translateY(0);}
+
+/* ── GLITCH effect ── */
+@keyframes glitch-clip1{0%,100%{clip-path:inset(0 0 95% 0)}20%{clip-path:inset(30% 0 50% 0)}40%{clip-path:inset(70% 0 10% 0)}60%{clip-path:inset(10% 0 80% 0)}80%{clip-path:inset(55% 0 20% 0)}}
+@keyframes glitch-clip2{0%,100%{clip-path:inset(80% 0 5% 0)}20%{clip-path:inset(10% 0 70% 0)}40%{clip-path:inset(50% 0 30% 0)}60%{clip-path:inset(20% 0 60% 0)}80%{clip-path:inset(65% 0 15% 0)}}
+@keyframes glitch-skew{0%,100%{transform:skewX(0deg) translateX(0)}25%{transform:skewX(-2deg) translateX(-3px)}50%{transform:skewX(1.5deg) translateX(2px)}75%{transform:skewX(-1deg) translateX(-1px)}}
+.glitch-wrap{position:relative;display:inline-block;}
+.glitch-wrap::before,.glitch-wrap::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;opacity:0;pointer-events:none;}
+.glitch-wrap::before{color:#00ff41;text-shadow:-2px 0 rgba(255,0,100,0.7);}
+.glitch-wrap::after{color:#00ff41;text-shadow:2px 0 rgba(0,200,255,0.7);}
+.glitch-wrap:hover{animation:glitch-skew 0.4s ease-in-out;}
+.glitch-wrap:hover::before{animation:glitch-clip1 0.4s steps(1,end) infinite;opacity:0.9;transform:translateX(-3px);}
+.glitch-wrap:hover::after{animation:glitch-clip2 0.4s steps(1,end) infinite;opacity:0.9;transform:translateX(3px);}
+
+/* ── NEON RIPPLE on buttons ── */
+.btn{position:relative;overflow:hidden;}
+.btn .ripple{position:absolute;border-radius:50%;background:rgba(0,255,65,0.35);transform:scale(0);animation:ripple-anim 0.6s linear;pointer-events:none;}
+@keyframes ripple-anim{to{transform:scale(4);opacity:0;}}
+[data-theme="void"] .btn .ripple{background:rgba(0,0,0,0.2);}
+[data-theme="void2"] .btn .ripple{background:rgba(255,255,255,0.2);}
+
+/* ── CARD HOVER enhanced — glow + scale + scanline flash ── */
+@keyframes scanline-flash{0%{top:-100%}100%{top:120%}}
+.s-card,.hi,.exp-c,.sk-group,.ach-c,.edu-i,.ct-wrap{position:relative;overflow:hidden;}
+.s-card::after,.hi::after,.exp-c::after,.sk-group::after,.ach-c::after{content:'';position:absolute;left:0;top:-100%;width:100%;height:40%;background:linear-gradient(to bottom,transparent,rgba(0,255,65,0.06),transparent);pointer-events:none;opacity:0;transition:opacity 0.1s;}
+.s-card:hover::after,.hi:hover::after,.exp-c:hover::after,.sk-group:hover::after,.ach-c:hover::after{opacity:1;animation:scanline-flash 0.5s ease-out forwards;}
+[data-theme="matrix"] .s-card:hover{border-color:rgba(0,255,65,0.5);transform:translateY(-5px) scale(1.02);box-shadow:0 0 30px rgba(0,255,65,0.2),0 8px 25px rgba(0,0,0,0.4);}
+[data-theme="matrix"] .hi:hover{border-color:rgba(0,255,65,0.5);box-shadow:0 0 20px rgba(0,255,65,0.15);}
+[data-theme="matrix"] .exp-c:hover{border-color:rgba(0,255,65,0.45);box-shadow:0 0 35px rgba(0,255,65,0.18),0 8px 30px rgba(0,0,0,0.5);transform:translateY(-5px) scale(1.005);}
+[data-theme="matrix"] .sk-group:hover{border-color:rgba(0,255,65,0.45);box-shadow:0 0 25px rgba(0,255,65,0.15);}
+[data-theme="matrix"] .ach-c:hover{border-color:rgba(0,255,65,0.45);box-shadow:0 0 30px rgba(0,255,65,0.18);}
+.sk-tag{transition:all 0.2s;}
+.sk-group:hover .sk-tag{border-color:rgba(0,255,65,0.25);color:var(--text);}
+
+/* ── NAV LINK hover — matrix rain drop underline ── */
+.nav-links a{position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:2px;background:var(--accent);transition:width 0.3s ease;box-shadow:0 0 8px var(--accent);}
+.nav-links a:hover::after{width:100%;}
+
+/* ── TERMINAL BLOCK ── */
+#terminal-section{padding:3rem 0;}
+.terminal-wrap{background:#000;border:1px solid rgba(0,255,65,0.3);border-radius:10px;overflow:hidden;box-shadow:0 0 40px rgba(0,255,65,0.08),0 20px 60px rgba(0,0,0,0.6);}
+[data-theme="void"] .terminal-wrap{background:#f0f0f0;border-color:rgba(0,0,0,0.2);}
+[data-theme="void2"] .terminal-wrap{background:#0a0a0a;border-color:rgba(255,255,255,0.12);}
+.terminal-bar{background:#0d1a0d;padding:0.65rem 1rem;display:flex;align-items:center;gap:0.5rem;border-bottom:1px solid rgba(0,255,65,0.15);}
+[data-theme="void"] .terminal-bar{background:#e0e0e0;border-color:rgba(0,0,0,0.1);}
+[data-theme="void2"] .terminal-bar{background:#111;border-color:rgba(255,255,255,0.07);}
+.t-dot{width:12px;height:12px;border-radius:50%;}
+.t-dot:nth-child(1){background:#ff5f57;}
+.t-dot:nth-child(2){background:#febc2e;}
+.t-dot:nth-child(3){background:#28c840;}
+.t-title{margin-left:0.5rem;font-size:0.78rem;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:0.05em;}
+.terminal-body{padding:1.5rem 1.8rem;min-height:320px;font-family:'Share Tech Mono',monospace;font-size:0.95rem;line-height:2;}
+.t-line{display:flex;align-items:flex-start;gap:0.5rem;opacity:0;transform:translateY(4px);transition:opacity 0.3s,transform 0.3s;}
+.t-line.show{opacity:1;transform:translateY(0);}
+.t-prompt{color:rgba(0,255,65,0.5);flex-shrink:0;}
+.t-cmd{color:#e8ffe8;}
+[data-theme="void"] .t-cmd{color:#111;}
+[data-theme="void2"] .t-cmd{color:#eee;}
+.t-out{color:#4a9e4a;padding-left:1.2rem;}
+[data-theme="void"] .t-out{color:#444;}
+[data-theme="void2"] .t-out{color:#777;}
+.t-ok{color:#00ff41;font-weight:700;}
+.t-warn{color:#febc2e;}
+.t-err{color:#ff5f57;}
+.t-cursor-blink{display:inline-block;width:9px;height:1.1em;background:var(--accent);margin-left:2px;vertical-align:middle;animation:blink 1s infinite;}
+[data-theme="void"] .t-cursor-blink{background:#000;}
+[data-theme="void2"] .t-cursor-blink{background:#fff;}
+
+[data-theme="void"] #terminal-section .terminal-wrap{display:none;}
+[data-theme="void"] #terminal-section::after{content:'// Terminal hidden in Day mode';display:block;text-align:center;color:#aaa;font-size:0.85rem;font-family:monospace;padding:2rem;}
+
+[data-theme="void"] .btn-p{background:#000;color:#fff;}
+[data-theme="void"] .exp-ul li::before{content:'→';}
+[data-theme="void2"] .btn-p{background:#fff;color:#000;}
+[data-theme="void2"] .exp-ul li::before{content:'→';}
+
+/* ── RESPONSIVE ── */
+
+/* Large desktop: full width use karo */
+@media(min-width:1400px){
+  .container,.nav-in{max-width:1280px;}
+  .hero-grid{grid-template-columns:1fr 500px;gap:4rem;}
+  .hero-name{font-size:5.8rem;}
+  .s-title{font-size:3rem;}
+  body{font-size:20px;}
+  .about-g p{font-size:1.2rem;}
+  .exp-ul li{font-size:1.1rem;}
+  .hero-desc{font-size:1.15rem;}
+}
+
+/* Normal desktop 1024–1399 */
+@media(min-width:1024px) and (max-width:1399px){
+  .container,.nav-in{max-width:1100px;}
+  .hero-grid{grid-template-columns:1fr 420px;gap:3.5rem;}
+}
+
+/* Tablet landscape 768–1023 */
+@media(min-width:768px) and (max-width:1023px){
+  .container,.nav-in{max-width:100%;padding:0 2rem;}
+  .hero-grid{grid-template-columns:1fr 320px;gap:2rem;}
+  .hero-name{font-size:clamp(2.8rem,5vw,4rem);}
+  .sphere-wrap{height:320px;}
+  #sphere-canvas{width:320px;height:320px;}
+  .about-g{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(3,1fr);}
+  .nav-links{gap:1.5rem;}
+  .nav-links a{font-size:0.8rem;}
+  .theme-toggle{top:0.9rem;right:1.2rem;}
+}
+
+/* Mobile 480–767 */
+@media(max-width:767px){
+  .container,.nav-in{padding:0 1.2rem;}
+  nav{padding:0.8rem 0;}
+  .nav-links{gap:1.2rem;}
+  .nav-links a{font-size:0.75rem;}
+  .hero-grid{grid-template-columns:1fr;gap:1.5rem;}
+  .sphere-wrap{height:260px;order:-1;}
+  #sphere-canvas{width:260px;height:260px;}
+  .hero-name{font-size:clamp(2.4rem,10vw,3.5rem);}
+  .hero-dual .dual-row{font-size:0.8rem;flex-wrap:wrap;}
+  .about-g{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .ach-g{grid-template-columns:1fr 1fr;}
+  .sk-g{grid-template-columns:1fr 1fr;}
+  .theme-toggle{top:0.7rem;right:1rem;font-size:0.68rem;padding:0.3rem 0.75rem;}
+  section{padding:3.5rem 0;}
+  .s-title{font-size:clamp(1.7rem,6vw,2.2rem);}
+  .ct-wrap{padding:1.8rem 1.2rem;}
+}
+
+/* Small mobile <480 */
+@media(max-width:479px){
+  .hero-name{font-size:2.4rem;}
+  .nav-links{gap:0.9rem;}
+  .nav-links a{font-size:0.7rem;letter-spacing:0.03em;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .ach-g{grid-template-columns:1fr;}
+  .sk-g{grid-template-columns:1fr;}
+  .sphere-wrap{height:220px;}
+  #sphere-canvas{width:220px;height:220px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+<div id="matrix-overlay"></div>
+<canvas id="star-canvas"></canvas>
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleDropdown()">
+  <div class="toggle-dot"></div>
+  <span id="themeLabel">MATRIX</span>
+  <span style="font-size:0.6rem;margin-left:3px;opacity:0.6;">▼</span>
+</button>
+<div class="theme-dropdown" id="themeDropdown">
+  <div class="theme-opt active" onclick="setTheme('matrix')" id="opt-matrix"><div class="dot dot-matrix"></div> MATRIX</div>
+  <div class="theme-opt" onclick="setTheme('void')" id="opt-void"><div class="dot dot-void"></div> VOID — DAY</div>
+  <div class="theme-opt" onclick="setTheme('void2')" id="opt-void2"><div class="dot dot-void2"></div> VOID — DARK</div>
+</div>
+
+<nav>
+  <div class="nav-in">
+    <a href="#hero" class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px var(--accent));transition:filter 0.4s;"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#experience">EXPERIENCE</a></li>
+      <li><a href="#skills">SKILLS</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge"><span class="blink">▸</span> OPEN TO SAP FUNCTIONAL CONSULTANT ROLES</div>
+        <h1 class="hero-name">SHIVANKAR<br/>PANDEY</h1>
+        <div class="hero-dual">
+          <div class="dual-row"><span class="tag">[SAP]</span><span>→</span><span>S/4HANA · MM · SD · WM · FI · Supply Chain</span></div>
+          <div class="dual-row"><span class="tag">[DEV]</span><span>→</span><span>Python · Java · C# · C++ · HTML · SQL · Node</span></div>
+        </div>
+        <div class="hero-type"><span class="t" id="typed"></span><span class="bl"></span></div>
+        <p class="hero-desc">2+ years managing pan-India supply chain operations at Century Pulp &amp; Paper — while building software on the side. Two disciplines, one professional.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn btn-p">CONNECT</a>
+        </div>
+      </div>
+      <div class="sphere-wrap">
+        <canvas id="sphere-canvas" width="420" height="420"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-h"><span>SCROLL</span><div class="ln"></div></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="padding-top:2rem;">
+  <div class="container">
+    <div class="stats fade">
+      <div class="s-card"><div class="s-num" data-target="2" data-suffix="+">0</div><div class="s-lbl">YRS EXPERIENCE</div></div>
+      <div class="s-card"><div class="s-num" data-target="17" data-suffix="+">0</div><div class="s-lbl">SAP TRANSACTIONS</div></div>
+      <div class="s-card"><div class="s-num" data-target="7">0</div><div class="s-lbl">QSCs MANAGED</div></div>
+      <div class="s-card"><div class="s-num" data-target="5000" data-suffix="MT">0</div><div class="s-lbl">MONTHLY DISPATCH</div></div>
+      <div class="s-card"><div class="s-num" data-target="0">0</div><div class="s-lbl">COMPLIANCE ISSUES</div></div>
+    </div>
+    <div class="s-label">// ABOUT</div>
+    <h2 class="s-title" data-type="SAP Professional. Developer. Problem Solver.">SAP Professional.<span class="tcursor"></span></h2>
+    <div class="about-g">
+      <div class="fade">
+        <p>I'm an SAP S/4HANA operations professional with 2+ years of live transactional experience at Century Pulp &amp; Paper — one of India's leading paper manufacturers. I manage a pan-India network of 7 outsourced Quick Service Centres, handling 4,500–5,000 MT of monthly dispatch across MM, SD, WM &amp; FI modules.</p>
+        <p>Simultaneously, I hold a Diploma in Computer Science &amp; Engineering and am proficient in Python, C, C++, C#, Java, HTML, CSS, SQL, and Node.js — applying a technical mindset to operational challenges every day.</p>
+        <p>My goal is to transition into an SAP Functional Consultant role, combining deep multi-module transactional expertise with a developer's analytical approach.</p>
+      </div>
+      <div class="hi-list fade">
+        <div class="hi"><div><div class="hi-t">⚡ SAP Multi-Module Expertise</div><div class="hi-d">Daily execution across MM, SD, WM &amp; FI — 17+ transactions</div></div></div>
+        <div class="hi"><div><div class="hi-t">🌐 Pan-India Operations</div><div class="hi-d">7 QSCs across 7 states, 4,500–5,000 MT monthly dispatch</div></div></div>
+        <div class="hi"><div><div class="hi-t">💻 Full-Stack Developer</div><div class="hi-d">Python, Java, C#, HTML/CSS, SQL, Node.js &amp; more</div></div></div>
+        <div class="hi"><div><div class="hi-t">✅ Zero Compliance Escalations</div><div class="hi-d">GST &amp; e-way bill compliance across all dispatches</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<section id="terminal-section">
+  <div class="container">
+    <div class="s-label">// SYSTEM LOG</div>
+    <div class="terminal-wrap fade" id="terminal-wrap">
+      <div class="terminal-bar">
+        <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+        <span class="t-title">shivankar@sap-system:~$ — bash</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="s-label">// EXPERIENCE</div>
+    <h2 class="s-title" data-type="Where I've Worked">Where I've Worked<span class="tcursor"></span></h2>
+    <div class="exp-list">
+      <div class="exp-c">
+        <div class="exp-h">
+          <div><div class="exp-role">TPA – Associate</div><div class="exp-co">Century Pulp and Paper · Lalkuan, Uttarakhand</div></div>
+          <div class="exp-date">NOV 2024 – PRESENT</div>
+        </div>
+        <ul class="exp-ul">
+          <li>Managed SAP S/4HANA inventory &amp; order processing for 7 outsourced QSCs — 4,500–5,000 MT/month across MM, SD, WM &amp; FI workflows covering 40+ SKUs.</li>
+          <li>Executed GRN processing via MIGO using 7 movement types (MT: 101, 103, 105, 309, 311, 411, 601) for goods receipt, blocked stock release, material transfers &amp; delivery issues.</li>
+          <li>Processed sales orders (VA01/VA02), outbound deliveries (VL01N/VL02N), billing (VF01), released order tracking (VKM3), billing due list (VF04) &amp; booked order reporting (ZSDR1N).</li>
+          <li>Independently handled Tissue Retail invoicing — 40+ SKUs (12.5–48 GSM), 60–100 MT/month; bills completed in ~20 minutes through command optimisation.</li>
+          <li>Coordinated GST invoicing &amp; e-way bill compliance via SAP SD/FI integration — zero compliance escalations throughout tenure.</li>
+        </ul>
+      </div>
+      <div class="exp-c">
+        <div class="exp-h">
+          <div><div class="exp-role">Diploma Apprentice</div><div class="exp-co">Century Pulp and Paper · Lalkuan, Uttarakhand</div></div>
+          <div class="exp-date">NOV 2023 – NOV 2024</div>
+        </div>
+        <ul class="exp-ul">
+          <li>Completed structured SAP apprenticeship in live production environment across MM, SD &amp; WM modules — scrap handling, invoicing &amp; warehouse management.</li>
+          <li>Acquired paper manufacturing knowledge across 7 paper machines (PM#1–PM#7) and 5 pulp mills; performed GSM quality checks (40–550 GSM range).</li>
+          <li>Supported QSC billing &amp; invoicing workflows for Paper &amp; Tissue product lines; built foundational SAP SD &amp; MM proficiency.</li>
+          <li>Operated CHM 1400 computerised sheeter (300 m/min) &amp; MILT-EX sheeter in production support role.</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:2.2rem;">
+      <div class="s-label" style="margin-bottom:1rem;">// SAP MODULES & TRANSACTIONS</div>
+      <div class="tbl-wrap fade">
+        <table>
+          <thead><tr><th>Module</th><th>T-Codes</th><th>Function</th><th>Context</th></tr></thead>
+          <tbody>
+            <tr><td>SAP MM</td><td><span class="tc">MIGO</span> <span class="tc">MB51</span> <span class="tc">ME21N</span></td><td>Goods Movement, Stock, PO</td><td>GRN with 7 movement types</td></tr>
+            <tr><td>SAP SD</td><td><span class="tc">VA01</span> <span class="tc">VF01</span> <span class="tc">VKM3</span> <span class="tc">VF04</span></td><td>Sales Orders, Billing, Delivery</td><td>Order processing, GST billing</td></tr>
+            <tr><td>SAP WM</td><td><span class="tc">LT23</span> <span class="tc">LT10</span> <span class="tc">LT12</span></td><td>Transfer Orders, Warehouse</td><td>TO creation &amp; confirmation</td></tr>
+            <tr><td>SAP FI</td><td><span class="tc">VF01</span> <span class="tc">VF03</span> <span class="tc">FB60</span></td><td>Billing Docs, Vendor Invoice</td><td>FI-SD billing, vendor payments</td></tr>
+            <tr><td>Custom</td><td><span class="tc">ZSDR1N</span></td><td>Booked Order Report</td><td>Century-specific order tracking</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="s-label">// SKILLS</div>
+    <h2 class="s-title" data-type="Technical Expertise">Technical Expertise<span class="tcursor"></span></h2>
+    <div class="sk-g">
+      <div class="sk-group"><div class="sk-gtitle">SAP Modules</div><div class="sk-tags"><span class="sk-tag">SAP S/4HANA</span><span class="sk-tag">SAP MM</span><span class="sk-tag">SAP SD</span><span class="sk-tag">SAP WM</span><span class="sk-tag">SAP FI</span></div></div>
+      <div class="sk-group"><div class="sk-gtitle">Programming</div><div class="sk-tags"><span class="sk-tag">Python</span><span class="sk-tag">C</span><span class="sk-tag">C++</span><span class="sk-tag">C#</span><span class="sk-tag">Java</span><span class="sk-tag">SQL</span><span class="sk-tag">Node.js</span></div></div>
+      <div class="sk-group"><div class="sk-gtitle">Web Technologies</div><div class="sk-tags"><span class="sk-tag">HTML</span><span class="sk-tag">CSS</span><span class="sk-tag">Bootstrap</span><span class="sk-tag">Responsive Design</span></div></div>
+      <div class="sk-group"><div class="sk-gtitle">Logistics & Operations</div><div class="sk-tags"><span class="sk-tag">GRN Processing</span><span class="sk-tag">Inventory Mgmt</span><span class="sk-tag">Supply Chain</span><span class="sk-tag">QSC Ops</span></div></div>
+      <div class="sk-group"><div class="sk-gtitle">Compliance</div><div class="sk-tags"><span class="sk-tag">GST Invoicing</span><span class="sk-tag">E-Way Bill</span><span class="sk-tag">FI-SD Integration</span><span class="sk-tag">Tissue Billing</span></div></div>
+      <div class="sk-group"><div class="sk-gtitle">Tools & OS</div><div class="sk-tags"><span class="sk-tag">MS Excel</span><span class="sk-tag">MS Word</span><span class="sk-tag">PowerPoint</span><span class="sk-tag">Windows</span><span class="sk-tag">Linux</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="container">
+    <div class="s-label">// ACHIEVEMENTS</div>
+    <h2 class="s-title" data-type="Impact by the Numbers">Impact by the Numbers<span class="tcursor"></span></h2>
+    <div class="ach-g">
+      <div class="ach-c"><div class="ach-m" data-target="7">0</div><div class="ach-t">Pan-India QSC Network</div><div class="ach-d">7 outsourced QSCs across Uttarakhand, Gujarat, Maharashtra, Himachal Pradesh, Punjab, Karnataka &amp; Haryana.</div></div>
+      <div class="ach-c"><div class="ach-m" data-target="5000" data-suffix="MT">0</div><div class="ach-t">Monthly Dispatch</div><div class="ach-d">Actual monthly dispatch of 4,500–5,000 MT managed across the pan-India QSC network.</div></div>
+      <div class="ach-c"><div class="ach-m" data-target="8" data-prefix="~" data-suffix="min">0</div><div class="ach-t">Billing Efficiency</div><div class="ach-d">Reduced standard SAP billing to 7–8 minutes per entry through command optimisation.</div></div>
+      <div class="ach-c"><div class="ach-m" data-target="0">0</div><div class="ach-t">Compliance Escalations</div><div class="ach-d">Zero compliance escalations across all GST &amp; e-way bill dispatches throughout entire tenure.</div></div>
+      <div class="ach-c"><div class="ach-m" data-target="40" data-suffix="+">0</div><div class="ach-t">SKUs Managed</div><div class="ach-d">End-to-end Tissue Retail invoicing across 40+ SKUs (12.5–48 GSM), 60–100 MT monthly.</div></div>
+      <div class="ach-c"><div class="ach-m" data-target="17" data-suffix="+">0</div><div class="ach-t">Daily SAP Transactions</div><div class="ach-d">Daily execution across MM, SD, WM &amp; FI for end-to-end order fulfilment &amp; compliance.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="s-label">// EDUCATION</div>
+    <h2 class="s-title" data-type="Academic Background">Academic Background<span class="tcursor"></span></h2>
+    <div class="edu-l fade">
+      <div class="edu-i"><div><div class="edu-deg">Diploma — Computer Science &amp; Engineering</div><div class="edu-inst">Govt. Polytechnic Sult, Almora</div></div><div class="edu-yr">2020 – 2023</div></div>
+      <div class="edu-i"><div><div class="edu-deg">Diploma — Computer Science &amp; Web Development</div><div class="edu-inst">Hiltron CALC, Haldwani</div></div><div class="edu-yr">2019 – 2020</div></div>
+      <div class="edu-i"><div><div class="edu-deg">12th Grade — Biology Stream</div><div class="edu-inst">Don Bosco Sr. Sec. School, Haldwani</div></div><div class="edu-yr">2018 – 2019</div></div>
+    </div>
+    <div style="margin-top:2.2rem;">
+      <div class="s-label" style="margin-bottom:1rem;">// LEADERSHIP</div>
+      <div class="exp-c" style="opacity:1;transform:none;">
+        <div class="exp-h">
+          <div><div class="exp-role">NSS Camp Leader</div><div class="exp-co">7-Day Residential Camp · Almora, Uttarakhand</div></div>
+          <div class="exp-date">APR 2023</div>
+        </div>
+        <ul class="exp-ul">
+          <li>Selected as Camp Leader to manage 45–47 volunteers across a 7-day NSS camp in hilly terrain — logistics planning, team discipline &amp; scheduling.</li>
+          <li>Spearheaded community outreach: rural-urban migration surveys, Road Safety plays &amp; Nasha Mukt Bharat Abhiyan campaigns.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="s-label">// CONTACT</div>
+    <h2 class="s-title" data-type="Let's Connect">Let's Connect<span class="tcursor"></span></h2>
+    <div class="ct-wrap fade">
+      <p>Open to SAP Functional Consultant roles and development opportunities. Reach out via any channel below.</p>
+      <div class="ct-links">
+        <a href="mailto:dark_en__@outlook.com" class="ct-a">✉ EMAIL</a>
+        <a href="https://www.linkedin.com/in/shivankarpandey-sap" target="_blank" class="ct-a">in LINKEDIN</a>
+        <a href="https://www.instagram.com/_dark_ey/" target="_blank" class="ct-a">◎ INSTAGRAM</a>
+        <a href="https://github.com/darkcraft-x" target="_blank" class="ct-a">⌥ GITHUB</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container"><p>© 2025 SHIVANKAR PANDEY · HALDWANI, UTTARAKHAND</p></div></footer>
+
+<script>
+// ── Theme ──
+const themes={matrix:'MATRIX',void:'VOID — DAY',void2:'VOID — DARK'};
+function toggleDropdown(){document.getElementById('themeDropdown').classList.toggle('open');}
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeLabel').textContent=themes[t];
+  document.querySelectorAll('.theme-opt').forEach(el=>el.classList.remove('active'));
+  document.getElementById('opt-'+t).classList.add('active');
+  document.getElementById('themeDropdown').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  const dd=document.getElementById('themeDropdown'),btn=document.getElementById('themeToggle');
+  if(!dd.contains(e.target)&&!btn.contains(e.target))dd.classList.remove('open');
+});
+
+// ── Cursor ──
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx-4+'px';cur.style.top=my-4+'px';});
+(function a(){rx+=(mx-rx-15)*0.1;ry+=(my-ry-15)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cur.style.transform='scale(2.5)';ring.style.transform='scale(1.5)';});el.addEventListener('mouseleave',()=>{cur.style.transform='scale(1)';ring.style.transform='scale(1)';});});
+
+// ── Matrix Rain ──
+const mc=document.getElementById('matrix-canvas'),mx2=mc.getContext('2d');
+let mW,mH,cols,drops=[];
+const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF</>{}[];';
+function resizeMatrix(){mW=mc.width=window.innerWidth;mH=mc.height=window.innerHeight;cols=Math.floor(mW/16);drops=Array(cols).fill(1);}
+resizeMatrix();window.addEventListener('resize',resizeMatrix);
+function drawMatrix(){
+  mx2.fillStyle='rgba(0,0,0,0.06)';mx2.fillRect(0,0,mW,mH);
+  mx2.font='13px Share Tech Mono';
+  drops.forEach((y,i)=>{
+    const c=chars[Math.floor(Math.random()*chars.length)];
+    const x=i*16;
+    mx2.fillStyle='rgba(180,255,180,0.5)';mx2.fillText(c,x,y*16);
+    mx2.fillStyle='rgba(0,255,65,0.22)';mx2.fillText(chars[Math.floor(Math.random()*chars.length)],x,(y-1)*16);
+    if(y*16>mH&&Math.random()>0.975)drops[i]=0;
+    drops[i]++;
+  });
+}
+setInterval(drawMatrix,45);
+
+// ── Stars — 220 twinkling for void2 ──
+const sc2=document.getElementById('star-canvas'),sx2=sc2.getContext('2d');
+let sW,sH,stars=[];
+function resizeStars(){sW=sc2.width=window.innerWidth;sH=sc2.height=window.innerHeight;}
+resizeStars();window.addEventListener('resize',resizeStars);
+for(let i=0;i<220;i++){
+  stars.push({
+    x:Math.random(),y:Math.random(),
+    r:Math.random()*1.4+0.2,
+    o:Math.random()*0.6+0.1,
+    fo:(Math.random()*0.012+0.004)*(Math.random()<0.5?1:-1),
+    maxO:Math.random()*0.5+0.3,minO:0.04
+  });
+}
+function drawStars(){
+  sx2.clearRect(0,0,sW,sH);
+  stars.forEach(s=>{
+    s.o+=s.fo;
+    if(s.o>s.maxO||s.o<s.minO)s.fo*=-1;
+    sx2.beginPath();sx2.arc(s.x*sW,s.y*sH,s.r,0,Math.PI*2);
+    sx2.fillStyle=`rgba(255,255,255,${s.o})`;sx2.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ── 3D Sphere ──
+const spc=document.getElementById('sphere-canvas'),spx=spc.getContext('2d');
+const CX=210,CY=210,SR=158;
+let sdots=[],ang=0;
+for(let i=0;i<300;i++){const phi=Math.acos(-1+2*i/300);const theta=Math.sqrt(300*Math.PI)*phi;sdots.push({phi,theta});}
+function drawSphere(){
+  spx.clearRect(0,0,420,420);ang+=0.005;
+  const theme=document.documentElement.getAttribute('data-theme');
+  const col=theme==='matrix'?'0,255,65':theme==='void2'?'255,255,255':'0,0,0';
+  const pts=sdots.map(d=>{
+    const x=Math.sin(d.phi)*Math.cos(d.theta+ang);
+    const y=Math.cos(d.phi);
+    const z=Math.sin(d.phi)*Math.sin(d.theta+ang);
+    return{sx:CX+SR*x,sy:CY+SR*y,z,r:Math.max(0.5,(z+1)*1.4)};
+  });
+  pts.sort((a,b)=>a.z-b.z);
+  pts.forEach(p=>{
+    const op=((p.z+1)/2)*0.8+0.05;
+    spx.beginPath();spx.arc(p.sx,p.sy,p.r,0,Math.PI*2);
+    spx.fillStyle=`rgba(${col},${op})`;spx.fill();
+  });
+  const grad=spx.createRadialGradient(CX,CY,SR-10,CX,CY,SR+22);
+  grad.addColorStop(0,`rgba(${col},0.07)`);grad.addColorStop(1,'transparent');
+  spx.beginPath();spx.arc(CX,CY,SR+18,0,Math.PI*2);spx.fillStyle=grad;spx.fill();
+  requestAnimationFrame(drawSphere);
+}
+drawSphere();
+
+// ── Hero Typing ──
+const roles=['SAP S/4HANA Operations Specialist','Supply Chain & Logistics Professional','Developer — Python · Java · C# · Web','Aspiring SAP Functional Consultant'];
+let ri=0,ci=0,del=false;
+const typedEl=document.getElementById('typed');
+function type(){
+  const w=roles[ri];
+  if(!del){typedEl.textContent=w.slice(0,++ci);if(ci===w.length){del=true;setTimeout(type,1800);return;}}
+  else{typedEl.textContent=w.slice(0,--ci);if(ci===0){del=false;ri=(ri+1)%roles.length;}}
+  setTimeout(type,del?38:82);
+}
+type();
+
+// ── Section Title Typing Effect ──
+function initSectionTyping(el){
+  const full=el.getAttribute('data-type');
+  if(!full||el._typed)return;
+  el._typed=true;
+  // Remove all existing text nodes, keep only .tcursor span
+  Array.from(el.childNodes).forEach(n=>{if(n.nodeType===3)n.remove();});
+  // Create a dedicated text node BEFORE the cursor
+  const cursor=el.querySelector('.tcursor');
+  const tn=document.createTextNode('');
+  el.insertBefore(tn,cursor);
+  // Make element visible now
+  el.classList.add('_ready');
+  let i=0;
+  function typeTitle(){
+    tn.textContent=full.slice(0,++i);
+    if(i<full.length)setTimeout(typeTitle,55);
+  }
+  typeTitle();
+}
+
+// ── Scroll reveal + trigger section typing ──
+const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('vis'),i*80);obs.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.fade,.exp-c,.sk-group,.ach-c').forEach(el=>obs.observe(el));
+
+const titleObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){initSectionTyping(e.target);titleObs.unobserve(e.target);}});},{threshold:0.3});
+document.querySelectorAll('.s-title[data-type]').forEach(el=>titleObs.observe(el));
+
+// ── Counters ──
+function countUp(el,target,prefix='',suffix=''){let s=null;const dur=1600;const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/dur,1);const ease=1-Math.pow(1-p,3);el.textContent=prefix+Math.floor(ease*target)+suffix;if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
+const cobs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;countUp(el,+el.dataset.target,el.dataset.prefix||'',el.dataset.suffix||'');cobs.unobserve(el);}});},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>cobs.observe(el));
+
+// ── Glitch: apply to nav links ──
+document.querySelectorAll('.nav-links a').forEach(el=>{
+  el.classList.add('glitch-wrap');
+  el.setAttribute('data-text',el.textContent);
+});
+
+// ── Ripple on buttons ──
+document.querySelectorAll('.btn,.ct-a').forEach(btn=>{
+  btn.addEventListener('click',function(e){
+    const r=document.createElement('span');
+    r.classList.add('ripple');
+    const rect=btn.getBoundingClientRect();
+    const size=Math.max(rect.width,rect.height);
+    r.style.width=r.style.height=size+'px';
+    r.style.left=(e.clientX-rect.left-size/2)+'px';
+    r.style.top=(e.clientY-rect.top-size/2)+'px';
+    btn.appendChild(r);
+    setTimeout(()=>r.remove(),700);
+  });
+});
+
+// ── Terminal auto-type ──
+const termLines=[
+  {type:'cmd',text:'./init_sap_session.sh --user=SPANDEV --system=S4H'},
+  {type:'out',text:'<span class="t-ok">✓</span> SAP S/4HANA connection established — Client 100'},
+  {type:'out',text:'<span class="t-ok">✓</span> Logged in as: SPANDEV | Role: TPA_ASSOCIATE'},
+  {type:'cmd',text:'sap-query --module=MM --tcodes'},
+  {type:'out',text:'Loaded: <span class="t-ok">MIGO · MB51 · ME21N · MBLB · MB52</span>'},
+  {type:'out',text:'Movement types active: <span class="t-ok">101 · 103 · 105 · 309 · 311 · 411 · 601</span>'},
+  {type:'cmd',text:'dispatch-status --qsc=all --month=current'},
+  {type:'out',text:'QSC Network: <span class="t-ok">7 nodes · 7 states</span> — All operational'},
+  {type:'out',text:'Monthly dispatch: <span class="t-ok">4,847 MT</span> / target 5,000 MT <span class="t-warn">[97.0%]</span>'},
+  {type:'out',text:'Compliance flags: <span class="t-ok">0</span> | GST invoices: <span class="t-ok">✓ Clean</span>'},
+  {type:'cmd',text:'python --version && node --version && java --version'},
+  {type:'out',text:'Python 3.11.4 · Node.js v20.5.0 · Java 17.0.8'},
+  {type:'cmd',text:'sap-module-check --all'},
+  {type:'out',text:'<span class="t-ok">✓</span> MM — Materials Management .............. PROFICIENT'},
+  {type:'out',text:'<span class="t-ok">✓</span> SD — Sales & Distribution .............. PROFICIENT'},
+  {type:'out',text:'<span class="t-ok">✓</span> WM — Warehouse Management .............. PROFICIENT'},
+  {type:'out',text:'<span class="t-ok">✓</span> FI — Financial Accounting .............. INTERMEDIATE'},
+  {type:'cmd',text:'echo "Goal: SAP Functional Consultant | Status: IN PROGRESS"'},
+  {type:'out',text:'<span class="t-ok">▸</span> Goal: SAP Functional Consultant | Status: <span class="t-warn">IN PROGRESS...</span><span class="t-cursor-blink"></span>'},
+];
+
+function buildTerminal(){
+  const body=document.getElementById('terminal-body');
+  if(!body)return;
+  body.innerHTML='';
+  let delay=0;
+  termLines.forEach((line,idx)=>{
+    const div=document.createElement('div');
+    div.className='t-line';
+    if(line.type==='cmd'){
+      div.innerHTML=`<span class="t-prompt">shivankar@sap $&gt;</span><span class="t-cmd">${line.text}</span>`;
+      delay+=idx===0?400:320;
+    } else {
+      div.innerHTML=`<span class="t-out">${line.text}</span>`;
+      delay+=160;
+    }
+    body.appendChild(div);
+    setTimeout(()=>{div.classList.add('show');},delay);
+  });
+}
+
+// Trigger terminal when it scrolls into view
+const termObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      buildTerminal();
+      termObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.2});
+const tw=document.getElementById('terminal-wrap');
+if(tw)termObs.observe(tw);
+</script>
+</body>
+</html>
