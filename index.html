@@ -1,1 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Shivankar Pandey — SAP Operations</title>
+<link href="https://fonts.bunny.net/css?family=aptos:400,500,600,700|aptos-display:700,800,900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  /* ── DARK MODE (default) ── */
+  :root {
+    --bg: #000000;
+    --bg2: #1c1c1e;
+    --accent: #0a84ff;
+    --accent2: #5e5ce6;
+    --red: #ff453a;
+    --green: #30d158;
+    --white: #f5f5f7;
+    --dim: #636366;
+    --dim2: #aeaeb2;
+    /* Glass — deep dark frosted */
+    --glass: rgba(255,255,255,0.055);
+    --glass2: rgba(255,255,255,0.10);
+    --glass-inner: linear-gradient(145deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.01) 60%);
+    --border: rgba(255,255,255,0.10);
+    --border2: rgba(255,255,255,0.20);
+    --border-strong: rgba(255,255,255,0.18);
+    --text-primary: #f5f5f7;
+    --text-secondary: #aeaeb2;
+    --text-dim: #636366;
+    --nav-bg: rgba(28,28,30,0.78);
+    --nav-border: rgba(255,255,255,0.10);
+    --card-hover-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    --blob-1: #4a4a52;
+    --blob-2: #3a3a44;
+    --blob-3: #2c2c38;
+    --blob-opacity: 0.55;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
 
+  /* ── LIGHT MODE ── */
+  [data-theme="light"] {
+    --bg: #e8e8ed;
+    --bg2: #ffffff;
+    --accent: #0071e3;
+    --accent2: #5856d6;
+    --red: #ff3b30;
+    --green: #28a745;
+    --white: #000000;
+    --dim: #3a3a3a;
+    --dim2: #1c1c1e;
+    --glass: rgba(255,255,255,0.92);
+    --glass2: rgba(255,255,255,1);
+    --glass-inner: linear-gradient(145deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.7) 60%);
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.20);
+    --border-strong: rgba(0,0,0,0.16);
+    --text-primary: #000000;
+    --text-secondary: #111111;
+    --text-dim: #444444;
+    --nav-bg: rgba(255,255,255,0.92);
+    --nav-border: rgba(0,0,0,0.14);
+    --card-hover-shadow: 0 12px 40px rgba(0,0,0,0.14);
+    --blob-1: #c8c8d0;
+    --blob-2: #d4d4dc;
+    --blob-3: #dcdce4;
+    --blob-opacity: 0.8;
+  }
+
+  /* ── LIGHT MODE forced black text ── */
+  [data-theme="light"] body,
+  [data-theme="light"] .hero-name,
+  [data-theme="light"] .hero-sub,
+  [data-theme="light"] .section-title,
+  [data-theme="light"] .section-eyebrow,
+  [data-theme="light"] .stat-num,
+  [data-theme="light"] .stat-lbl,
+  [data-theme="light"] .exp-role,
+  [data-theme="light"] .exp-co,
+  [data-theme="light"] .exp-items li,
+  [data-theme="light"] .metric-num,
+  [data-theme="light"] .metric-lbl,
+  [data-theme="light"] .skill-name,
+  [data-theme="light"] .skill-group-title,
+  [data-theme="light"] .ach-title,
+  [data-theme="light"] .ach-desc,
+  [data-theme="light"] .ach-num,
+  [data-theme="light"] .ach-tag,
+  [data-theme="light"] .contact-val,
+  [data-theme="light"] .contact-lbl,
+  [data-theme="light"] .msg-text,
+  [data-theme="light"] .msg-who,
+  [data-theme="light"] .ai-bar-title,
+  [data-theme="light"] .footer-l,
+  [data-theme="light"] .footer-r,
+  [data-theme="light"] .btn-ghost { color: #000000 !important; }
+
+  [data-theme="light"] .exp-date,
+  [data-theme="light"] .metric-unit,
+  [data-theme="light"] .contact-val a,
+  [data-theme="light"] .exp-badge,
+  [data-theme="light"] .nav-links a:hover { color: var(--accent) !important; }
+
+  [data-theme="light"] .nav-links a,
+  [data-theme="light"] .nav-logo,
+  [data-theme="light"] .mode-label { color: #000000 !important; }
+
+  [data-theme="light"] .hero-sub span { color: var(--red) !important; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #000000;
+    color: var(--text-primary);
+    font-family: 'Aptos', 'Inter', -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    overflow-x: hidden;
+    cursor: none;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  [data-theme="light"] body { background: #f0f0f5; }
+
+  /* Canvas constellation background */
+  #bgCanvas {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+
+  /* Cursor */
+  .cursor {
+    position: fixed; width: 22px; height: 22px;
+    border: 1.5px solid var(--text-secondary);
+    border-radius: 50%; pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.15s ease, width 0.2s, height 0.2s, border-color 0.2s, background 0.2s;
+    backdrop-filter: blur(2px);
+  }
+  .cursor-dot {
+    position: fixed; width: 5px; height: 5px;
+    background: var(--text-primary); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: background 0.4s;
+  }
+  .cursor.hovering {
+    width: 44px; height: 44px;
+    border-color: var(--accent);
+    background: rgba(10,132,255,0.08);
+  }
+
+  /* NAV — Dynamic Island style */
+  nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 100; display: flex; align-items: center;
+    background: var(--nav-bg);
+    backdrop-filter: blur(48px) saturate(220%);
+    -webkit-backdrop-filter: blur(48px) saturate(220%);
+    border: 1px solid var(--nav-border);
+    border-radius: 100px;
+    padding: 10px 12px 10px 20px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.08);
+    width: max-content; max-width: calc(100vw - 32px);
+    transition: background 0.35s, border-color 0.35s, box-shadow 0.35s, padding 0.4s cubic-bezier(0.22,1,0.36,1);
+    gap: 4px;
+  }
+  /* Dynamic Island expand on hover */
+  nav:hover {
+    box-shadow: 0 8px 48px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.10);
+    padding: 10px 14px 10px 22px;
+  }
+  .nav-logo {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--text-primary); letter-spacing: 0.5px;
+    white-space: nowrap; margin-right: 8px;
+    transition: color 0.35s;
+  }
+  /* Nav links — hidden on mobile, visible on desktop */
+  .nav-links {
+    display: flex; gap: 0;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-width 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+  }
+  nav.expanded .nav-links {
+    max-width: 500px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--text-dim);
+    text-decoration: none; padding: 7px 13px; border-radius: 100px;
+    transition: color 0.2s, background 0.2s; letter-spacing: 0.1px; white-space: nowrap;
+  }
+  .nav-links a:hover {
+    color: var(--text-primary);
+    background: var(--glass2);
+  }
+  .nav-right {
+    display: flex; align-items: center; gap: 8px; margin-left: 6px;
+  }
+  .nav-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite; flex-shrink: 0;
+  }
+  /* Mode label badge */
+  .mode-label {
+    overflow: hidden; max-width: 0; opacity: 0; padding: 4px 0; border-color: transparent; transition: all 0.35s;
+    font-size: 11px; font-weight: 600; color: var(--text-dim);
+    letter-spacing: 0.5px; white-space: nowrap;
+    padding: 4px 10px; border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    transition: all 0.35s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  nav.expanded .mode-label { max-width: 200px; opacity: 1; padding: 4px 10px; border-color: var(--border); }
+  /* Theme toggle button */
+  .theme-toggle {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    display: flex; align-items: center; justify-content: center;
+    cursor: none; font-size: 14px;
+    transition: background 0.2s, border-color 0.2s, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover {
+    background: var(--glass2);
+    border-color: var(--border2);
+    transform: scale(1.12) rotate(15deg);
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Mobile nav */
+  @media(max-width: 640px) {
+    nav { padding: 9px 10px 9px 16px; }
+    .nav-links { display: none; }
+    .mode-label { display: none; }
+  }
+
+  /* Sections */
+  section { position: relative; z-index: 2; padding: 100px 60px; }
+  .section-eyebrow {
+    font-size: 12px; font-weight: 600; color: var(--text-dim);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow::before { content:''; width:24px; height:1px; background:var(--text-dim); }
+  .section-title {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800; color: var(--text-primary);
+    margin-bottom: 56px; letter-spacing: -0.5px;
+    transition: color 0.4s;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 140px 60px 80px;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--border-strong);
+    border-radius: 100px; padding: 8px 18px;
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    letter-spacing: 2.5px; text-transform: uppercase;
+    margin-bottom: 28px; width: fit-content;
+    backdrop-filter: blur(20px);
+    transition: background 0.4s, border-color 0.4s, color 0.4s;
+  }
+  .hero-tag::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); }
+  .hero-name {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: clamp(52px, 9vw, 112px);
+    font-weight: 900; line-height: 0.94;
+    letter-spacing: -3px; margin-bottom: 12px;
+    color: var(--text-primary);
+    transition: color 0.4s;
+  }
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px); font-weight: 400;
+    color: var(--text-primary); letter-spacing: 0.2px; margin-bottom: 48px;
+    line-height: 1.55; transition: color 0.4s;
+  }
+  .hero-sub span { color: var(--red); font-weight: 500; }
+
+  .hero-stats {
+    display: flex; gap: 12px; margin-bottom: 52px; flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--glass);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 32px; display: flex; flex-direction: column; gap: 4px;
+    transition: all 0.3s; position: relative; overflow: hidden;
+    isolation: isolate;
+  }
+  .stat-pill::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--glass-inner);
+    border-radius: var(--radius); pointer-events: none;
+    z-index: -1;
+  }
+  .stat-pill:hover { background: var(--glass2); border-color: var(--border2); }
+  .stat-num {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: 34px; font-weight: 900; color: var(--text-primary);
+    line-height: 1; transition: color 0.4s;
+  }
+  .stat-lbl { font-size: 13px; color: var(--text-secondary); font-weight: 400; }
+
+  .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Aptos', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.1px;
+    padding: 13px 26px; border-radius: 100px; cursor: none;
+    text-decoration: none; transition: all 0.25s; border: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 18px rgba(10,132,255,0.35);
+  }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 28px rgba(10,132,255,0.45); }
+  .btn-ghost {
+    background: var(--glass);
+    border: 1px solid var(--border); color: var(--text-primary);
+    backdrop-filter: blur(20px);
+    transition: all 0.25s, color 0.4s;
+  }
+  .btn-ghost:hover { background: var(--glass2); border-color: var(--border2); }
+
+  /* GLASS CARD — proper frosted glass */
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+    isolation: isolate;
+  }
+  /* Inner specular highlight — the key to real frosted glass look */
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--glass-inner);
+    border-radius: var(--radius); pointer-events: none;
+    z-index: -1;
+  }
+  /* Top edge catchlight */
+  .card::after {
+    content: ''; position: absolute;
+    top: 0; left: 12px; right: 12px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .card:hover {
+    background: var(--glass2);
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: var(--card-hover-shadow);
+  }
+
+  /* EXPERIENCE */
+  .exp-grid { display: flex; flex-direction: column; gap: 20px; }
+  .exp-card { display: grid; grid-template-columns: 150px 1fr; gap: 32px; }
+  .exp-meta { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; min-width: 0; }
+  .exp-date { font-size: 12px; color: var(--accent); font-weight: 600; letter-spacing: 0.3px; line-height: 1.4; }
+  .exp-co { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .exp-badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 9px; border-radius: 50px; letter-spacing: 1px;
+    background: rgba(10,132,255,0.12); color: var(--accent);
+    border: 1px solid rgba(10,132,255,0.25); width: fit-content; margin-top: 6px;
+  }
+  .exp-role {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px;
+    transition: color 0.4s;
+  }
+  .exp-items { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .exp-items li {
+    font-size: 14px; color: var(--text-primary); line-height: 1.6;
+    padding-left: 16px; position: relative;
+  }
+  .exp-items li::before { content:'·'; position:absolute; left:4px; color:var(--text-secondary); font-size:16px; top:-1px; }
+
+  /* METRICS */
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .metric-card { text-align: center; padding: 36px 16px; }
+  .metric-num {
+    font-family: 'Aptos Display', 'Aptos', sans-serif;
+    font-size: 48px; font-weight: 900; color: var(--text-primary);
+    display: block; line-height: 1; transition: color 0.4s;
+  }
+  .metric-unit { font-size: 22px; color: var(--accent); }
+  .metric-lbl {
+    font-size: 11px; color: var(--text-dim); letter-spacing: 1px;
+    text-transform: uppercase; margin-top: 8px; display: block; font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .skill-group-title {
+    font-size: 12px; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 2.5px; text-transform: uppercase;
+    margin-bottom: 22px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .skill-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .skill-name { font-size: 15px; color: var(--text-primary); }
+  .skill-bar { width: 110px; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+  /* ACHIEVEMENTS */
+  .ach-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .ach-tag { font-size: 11px; font-weight: 700; color: var(--text-dim); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .ach-title { font-size: 19px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; transition: color 0.4s; }
+  .ach-desc { font-size: 15px; color: var(--text-primary); line-height: 1.6; }
+  .ach-num {
+    font-family: 'Aptos Display', 'Aptos', sans-serif; font-size: 28px;
+    color: var(--text-primary); margin-top: 20px; display: block; font-weight: 800;
+    transition: color 0.4s;
+  }
+
+  /* AI SECTION */
+  #ai-section { background: none; }
+  .ai-wrap { max-width: 820px; margin: 0 auto; }
+  .ai-window {
+    background: var(--glass);
+    backdrop-filter: blur(48px) saturate(200%);
+    -webkit-backdrop-filter: blur(48px) saturate(200%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px var(--border) inset;
+  }
+  .ai-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--glass);
+    border-bottom: 1px solid var(--border);
+  }
+  .ai-dots { display: flex; gap: 7px; }
+  .ai-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .ai-dot:nth-child(1) { background: #ff5f57; }
+  .ai-dot:nth-child(2) { background: #febc2e; }
+  .ai-dot:nth-child(3) { background: #28c840; }
+  .ai-bar-title {
+    font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.5px;
+  }
+  .ai-bar-badge {
+    font-size: 11px; font-weight: 600; color: var(--text-dim);
+    background: var(--glass); border: 1px solid var(--border);
+    border-radius: 50px; padding: 3px 10px; letter-spacing: 1px;
+  }
+  .ai-messages {
+    height: 380px; overflow-y: auto; padding: 24px;
+    display: flex; flex-direction: column; gap: 18px;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .msg { display: flex; gap: 14px; align-items: flex-start; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg-av {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .msg-av.ai { background: rgba(10,132,255,0.15); border: 1px solid rgba(10,132,255,0.3); color: var(--accent); }
+  .msg-av.user { background: var(--glass); border: 1px solid var(--border); color: var(--text-dim); }
+  .msg-body { flex: 1; }
+  .msg-who { font-size: 11px; color: var(--text-dim); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .msg-text {
+    font-size: 15px; color: var(--text-primary); line-height: 1.65;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 18px;
+  }
+  .msg.user .msg-text { background: var(--glass2); }
+  .typing { display:flex; gap:5px; align-items:center; padding:14px 18px; background:var(--glass); border:1px solid var(--border); border-radius:var(--radius-sm); width:fit-content; }
+  .typing-dot { width:7px; height:7px; border-radius:50%; background:var(--text-dim); animation:bounce 1.2s infinite; }
+  .typing-dot:nth-child(2){animation-delay:0.2s}
+  .typing-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+
+  .ai-chips {
+    padding: 12px 20px; display: flex; gap: 8px; flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+  }
+  .chip {
+    font-family: 'Aptos', sans-serif;
+    font-size: 13px; font-weight: 500; color: var(--text-secondary);
+    padding: 7px 14px; border: 1px solid var(--border);
+    border-radius: 50px; cursor: none; transition: all 0.2s; background: transparent;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(10,132,255,0.08); }
+
+  .ai-input-row {
+    display: flex; align-items: center; gap: 0;
+    border-top: 1px solid var(--border);
+    padding: 6px 6px 6px 20px;
+  }
+  #ai-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-size: 16px; color: var(--text-primary); font-family: 'Aptos', sans-serif;
+    padding: 10px 0; transition: color 0.4s;
+  }
+  #ai-input::placeholder { color: var(--text-dim); }
+  #ai-send {
+    background: var(--accent); border: none; border-radius: 50px;
+    padding: 10px 22px; color: white; font-size: 14px; font-weight: 600;
+    cursor: none; transition: all 0.2s; letter-spacing: 0.3px;
+    font-family: 'Aptos', sans-serif;
+  }
+  #ai-send:hover { filter: brightness(1.1); }
+
+  /* CONTACT */
+  .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .contact-card { display: flex; align-items: flex-start; gap: 14px; padding: 24px; }
+  .contact-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: var(--glass2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; margin-top: 2px;
+  }
+  .contact-info { min-width: 0; flex: 1; }
+  .contact-lbl { font-size: 10px; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+  .contact-val { font-size: 14px; color: var(--text-primary); word-break: break-all; line-height: 1.4; transition: color 0.4s; }
+  .contact-val a { color: var(--accent); text-decoration: none; word-break: break-all; }
+  .contact-val a:hover { text-decoration: underline; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); margin: 0 60px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 28px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+  .footer-l { font-size: 14px; color: var(--text-secondary); }
+  .footer-r { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+  .footer-r::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 900px) {
+    section { padding: 80px 28px; }
+    .hero { padding: 120px 28px 60px; }
+    .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+    .skills-grid { grid-template-columns: 1fr; }
+    .ach-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    footer { padding: 24px 28px; }
+    .divider { margin: 0 28px; }
+  }
+
+  @media(max-width: 640px) {
+    nav { padding: 8px 10px 8px 14px; max-width: calc(100vw - 24px); }
+    .nav-links { display: none; }
+    .mode-label { display: none; }
+    .nav-logo { font-size: 13px; }
+    body { cursor: auto; }
+    .cursor, .cursor-dot { display: none; }
+
+    section { padding: 52px 16px; }
+    .hero { padding: 90px 16px 48px; }
+    .hero-name { letter-spacing: -1.5px; }
+    .hero-stats { gap: 8px; }
+    .hero-btns { gap: 8px; }
+    .btn { justify-content: center; padding: 12px 20px; font-size: 14px; }
+
+    /* Experience: fully stacked on mobile */
+    .exp-card { grid-template-columns: 1fr; gap: 0; }
+    .exp-meta {
+      flex-direction: row; flex-wrap: wrap; gap: 6px 12px;
+      align-items: center; padding: 0 0 14px 0;
+      border-bottom: 1px solid var(--border); margin-bottom: 16px;
+    }
+    .exp-date { font-size: 12px; }
+    .exp-co { font-size: 12px; }
+    .exp-badge { margin-top: 0; }
+
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .metric-card { padding: 24px 12px; }
+    .metric-num { font-size: 36px; }
+    .metric-unit { font-size: 18px; }
+
+    .skills-grid { grid-template-columns: 1fr; }
+    .ach-grid { grid-template-columns: 1fr; }
+
+    .contact-grid { grid-template-columns: 1fr; gap: 10px; }
+    .contact-card { padding: 18px; }
+
+    .ai-messages { height: 260px; }
+    .ai-chips { gap: 6px; }
+    .chip { font-size: 12px; padding: 6px 10px; }
+    #ai-input { font-size: 14px; }
+
+    footer {
+      padding: 18px 16px; flex-direction: column;
+      gap: 6px; text-align: center;
+    }
+    footer .footer-r { justify-content: center; }
+    .divider { margin: 0 16px; }
+    .section-title { margin-bottom: 28px; }
+    .card { padding: 20px; }
+  }
+
+  @media(max-width: 380px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .metric-num { font-size: 30px; }
+    .hero-name { font-size: clamp(38px, 11vw, 60px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Shivankar Pandey</div>
+  <div class="nav-links">
+    <a href="#experience">Experience</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#skills">Skills</a>
+    <a href="#ai-section">JARVIS</a>
+    <a href="#contact">Connect</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-dot"></div>
+    <div class="mode-label" id="modeLabel">🌑 Dark Mode</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-tag">SAP S/4HANA Operations Specialist</div>
+  <h1 class="hero-name">SHIVANKAR<br>PANDEY</h1>
+  <p class="hero-sub">Sales &amp; Logistics · <span>Century Pulp &amp; Paper</span> · Uttarakhand</p>
+  <div class="hero-stats">
+    <div class="stat-pill">
+      <span class="stat-num">2<span style="font-size:20px;color:var(--accent)">+</span></span>
+      <span class="stat-lbl">Years Experience</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-num">17<span style="font-size:20px;color:var(--accent)">+</span></span>
+      <span class="stat-lbl">SAP Transactions Daily</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-num">6<span style="font-size:20px;color:var(--accent)">K</span></span>
+      <span class="stat-lbl">MT Dispatched / Month</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-num" style="color:var(--green)">0</span>
+      <span class="stat-lbl">Compliance Errors</span>
+    </div>
+  </div>
+  <div class="hero-btns">
+    <a href="#ai-section" class="btn btn-primary">Talk to JARVIS ↗</a>
+    <a href="#experience" class="btn btn-ghost">View Experience</a>
+    <a href="mailto:shivrajpandey37@gmail.com" class="btn btn-ghost">Contact</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-eyebrow">Professional Record</div>
+  <h2 class="section-title">Work Experience</h2>
+  <div class="exp-grid">
+
+    <div class="card exp-card">
+      <div class="exp-meta">
+        <div class="exp-date">Nov 2024 — Present</div>
+        <div class="exp-co">Century Pulp &amp; Paper</div>
+        <div class="exp-co">Lalkuan, Uttarakhand</div>
+        <div class="exp-badge">ACTIVE</div>
+      </div>
+      <div>
+        <div class="exp-role">TPA — Associate</div>
+        <ul class="exp-items">
+          <li>Managed SAP S/4HANA inventory &amp; order processing for 10 outsourced QSCs — 5,000–6,000 MT/month across MM, SD, WM &amp; FI modules</li>
+          <li>Executed GRN via MIGO using 11+ movement types (MT: 101, 103, 105, 309, 311, 411, 413, 413E, 601, 641)</li>
+          <li>Processed VA01–VA03 sales orders, VL01N/VL02N deliveries, VF01/VF02 billing, VKM3 tracking, VF04 due list</li>
+          <li>Independently handled Tissue Retail invoicing — 42+ SKUs (12.5–48 GSM), 70–80 MT/month avg, 112 MT peak FY25-26, in ~30 mins</li>
+          <li>Zero stock discrepancies sustained for 18+ months; zero GST/compliance escalations via SAP SD/FI integration</li>
+          <li>Operated CHM 1400 sheeter (300 m/min, 60–550 GSM) &amp; MILT-EX sheeter alongside warehouse coordination</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card exp-card">
+      <div class="exp-meta">
+        <div class="exp-date">Nov 2023 — Nov 2024</div>
+        <div class="exp-co">Century Pulp &amp; Paper</div>
+        <div class="exp-co">Lalkuan, Uttarakhand</div>
+        <div class="exp-badge" style="background:var(--glass);color:var(--text-dim);border-color:var(--border)">COMPLETED</div>
+      </div>
+      <div>
+        <div class="exp-role">Diploma Apprentice</div>
+        <ul class="exp-items">
+          <li>Structured SAP apprenticeship in live production — MM, SD &amp; WM modules</li>
+          <li>Scrap handling, invoicing &amp; warehouse management transactions</li>
+          <li>Paper manufacturing across 7 machines (PM#1–PM#7) &amp; 5 pulp mills; GSM quality checks (40–550 GSM)</li>
+          <li>QSC billing &amp; invoicing support; built foundational SAP SD &amp; MM proficiency</li>
+          <li>Proficient in Windows, Linux &amp; MS Office; CHM &amp; MILT-EX sheeter operations</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METRICS -->
+<section id="metrics">
+  <div class="section-eyebrow">Performance Data</div>
+  <h2 class="section-title">Operational Metrics</h2>
+  <div class="metrics-grid">
+    <div class="card metric-card">
+      <span class="metric-num">6<span class="metric-unit">K</span></span>
+      <span class="metric-lbl">MT Dispatched / Month</span>
+    </div>
+    <div class="card metric-card">
+      <span class="metric-num">10</span>
+      <span class="metric-lbl">Pan-India QSCs Managed</span>
+    </div>
+    <div class="card metric-card">
+      <span class="metric-num">42<span class="metric-unit">+</span></span>
+      <span class="metric-lbl">SKUs Handled</span>
+    </div>
+    <div class="card metric-card">
+      <span class="metric-num">17<span class="metric-unit">+</span></span>
+      <span class="metric-lbl">Daily SAP Transactions</span>
+    </div>
+    <div class="card metric-card">
+      <span class="metric-num">8<span class="metric-unit" style="font-size:18px">min</span></span>
+      <span class="metric-lbl">Avg Billing Time</span>
+    </div>
+    <div class="card metric-card">
+      <span class="metric-num" style="color:var(--green)">0</span>
+      <span class="metric-lbl">Compliance Escalations</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-eyebrow">Core Competencies</div>
+  <h2 class="section-title">Technical Skills</h2>
+  <div class="skills-grid">
+    <div class="card">
+      <div class="skill-group-title">SAP Modules</div>
+      <div class="skill-item"><span class="skill-name">SAP S/4HANA</span><div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">SAP MM</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">SAP SD</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">SAP WM</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">SAP FI</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="skill-group-title">Logistics &amp; Operations</div>
+      <div class="skill-item"><span class="skill-name">GRN Processing (MIGO)</span><div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Inventory Management</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">QSC &amp; Dispatch Ops</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Supply Chain Mgmt</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">GST &amp; E-Way Bill</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="skill-group-title">IT &amp; Tools</div>
+      <div class="skill-item"><span class="skill-name">MS Excel / Word</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Windows &amp; Linux</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">PowerPoint</span><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+      <div class="skill-item"><span class="skill-name">HTML / CSS</span><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AI SECTION -->
+<section id="ai-section">
+  <div class="ai-wrap">
+    <div class="section-eyebrow">Intelligence Interface</div>
+    <h2 class="section-title">Ask About Shivankar</h2>
+    <p style="font-size:16px;color:var(--text-dim);margin-bottom:32px;line-height:1.6;">An AI assistant trained on Shivankar's professional background. Ask anything about his experience, skills, or achievements.</p>
+
+    <div class="ai-window">
+      <div class="ai-bar">
+        <div class="ai-dots">
+          <div class="ai-dot"></div>
+          <div class="ai-dot"></div>
+          <div class="ai-dot"></div>
+        </div>
+        <div class="ai-bar-title">JARVIS — SAP Intelligence Unit</div>
+        <div class="ai-bar-badge">Powered by Claude AI</div>
+      </div>
+
+      <div class="ai-messages" id="messages">
+        <div class="msg">
+          <div class="msg-av ai">AI</div>
+          <div class="msg-body">
+            <div class="msg-who">JARVIS</div>
+            <div class="msg-text">Good day. I'm Shivankar's AI assistant — I have full access to his professional profile. 2+ years at Century Pulp &amp; Paper, SAP S/4HANA expert, Sales &amp; Logistics. What would you like to know?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-chips">
+        <button class="chip" onclick="sendChip(this)">SAP skills?</button>
+        <button class="chip" onclick="sendChip(this)">Tell me about your experience</button>
+        <button class="chip" onclick="sendChip(this)">Key achievements?</button>
+        <button class="chip" onclick="sendChip(this)">Open to new roles?</button>
+        <button class="chip" onclick="sendChip(this)">Education background?</button>
+      </div>
+
+      <div class="ai-input-row">
+        <input type="text" id="ai-input" placeholder="Ask anything about Shivankar…" onkeydown="if(event.key==='Enter')sendMessage()"/>
+        <button id="ai-send" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-eyebrow">Notable Operations</div>
+  <h2 class="section-title">Key Achievements</h2>
+  <div class="ach-grid">
+    <div class="card">
+      <div class="ach-tag">Sales Milestone</div>
+      <div class="ach-title">Highest-Ever Yearly Sales</div>
+      <div class="ach-desc">Contributed to QSC units achieving the company's highest-ever recorded yearly sales figure, recognized in a company-wide commendation from senior management (FY25-26).</div>
+      <span class="ach-num">68,466 MT</span>
+    </div>
+    <div class="card">
+      <div class="ach-tag">Network Ops</div>
+      <div class="ach-title">Pan-India QSC Network</div>
+      <div class="ach-desc">Managed 10 outsourced QSCs across Uttarakhand, Gujarat, Maharashtra, Himachal Pradesh, Punjab, Karnataka, Haryana &amp; 3 additional locations.</div>
+      <span class="ach-num">5,000–6,000 MT</span>
+    </div>
+    <div class="card">
+      <div class="ach-tag">Retail Ops</div>
+      <div class="ach-title">Tissue Retail Operations</div>
+      <div class="ach-desc">Independently managed end-to-end invoicing — 42+ SKUs (12.5–48 GSM), averaging 70–80 MT/month with a peak of 112 MT in FY25-26, completed in ~30 minutes per cycle via ZSDR1N.</div>
+      <span class="ach-num">42+ SKUs</span>
+    </div>
+    <div class="card">
+      <div class="ach-tag">Compliance</div>
+      <div class="ach-title">Zero Compliance Escalations</div>
+      <div class="ach-desc">Perfect compliance record across all dispatches — GST invoicing &amp; e-way bill via SAP SD/FI integration throughout tenure.</div>
+      <span class="ach-num" style="color:var(--green)">0 Errors</span>
+    </div>
+    <div class="card">
+      <div class="ach-tag">Leadership</div>
+      <div class="ach-title">NSS Camp Leader</div>
+      <div class="ach-desc">Led 45–47 volunteers across a 7-day residential NSS camp in hilly terrain — logistics, discipline &amp; community outreach.</div>
+      <span class="ach-num">45+ Volunteers</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-eyebrow">Get in Touch</div>
+  <h2 class="section-title">Connect</h2>
+  <div class="contact-grid">
+    <div class="card contact-card">
+      <div class="contact-icon">✉️</div>
+      <div class="contact-info">
+        <div class="contact-lbl">Email</div>
+        <div class="contact-val"><a href="mailto:shivrajpandey37@gmail.com">shivrajpandey37@gmail.com</a></div>
+      </div>
+    </div>
+    <div class="card contact-card">
+      <div class="contact-icon">🔗</div>
+      <div class="contact-info">
+        <div class="contact-lbl">LinkedIn</div>
+        <div class="contact-val"><a href="https://www.linkedin.com/in/shivankarpandey-sap" target="_blank">shivankarpandey-sap</a></div>
+      </div>
+    </div>
+    <div class="card contact-card">
+      <div class="contact-icon">📍</div>
+      <div class="contact-info">
+        <div class="contact-lbl">Location</div>
+        <div class="contact-val">Haldwani, Uttarakhand — 263139</div>
+      </div>
+    </div>
+    <div class="card contact-card">
+      <div class="contact-icon">🌐</div>
+      <div class="contact-info">
+        <div class="contact-lbl">Languages</div>
+        <div class="contact-val">Hindi (Native) · English (Professional)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-l">Shivankar Pandey · SAP Operations · 2026</div>
+  <div class="footer-r">Open to Opportunities</div>
+</footer>
+
+<script>
+  // Dynamic Island nav behavior
+  const navEl = document.querySelector('nav');
+  let navTimer;
+  navEl.addEventListener('mouseenter', () => {
+    clearTimeout(navTimer);
+    navEl.classList.add('expanded');
+  });
+  navEl.addEventListener('mouseleave', () => {
+    navTimer = setTimeout(() => navEl.classList.remove('expanded'), 300);
+  });
+
+  // Contact smooth scroll fix
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  // ── CONSTELLATION BACKGROUND ──
+  (function() {
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Create stars spread across full screen
+    const STARS = Array.from({ length: 100 }, () => ({
+      x: Math.random() * 2000 - 1000,
+      y: Math.random() * 2000 - 1000,
+      size: Math.random() * 2 + 0.5,
+      twinkleOffset: Math.random() * Math.PI * 2,
+    }));
+
+    let angle = 0;
+    let lastTime = performance.now();
+
+    function isLight() {
+      return document.documentElement.getAttribute('data-theme') === 'light';
+    }
+
+    function draw() {
+      const now0 = performance.now();
+      const dt = Math.min(now0 - lastTime, 50); // clamp to avoid jumps on tab refocus
+      lastTime = now0;
+
+      ctx.clearRect(0, 0, W, H);
+      angle += 0.0032 * (dt / 16.67); // faster, frame-rate independent rotation
+
+      const light = isLight();
+      const cx = W / 2, cy = H / 2;
+      const scale = Math.max(W, H) * 0.75;
+      const now = Date.now() * 0.001;
+
+      // Project stars with rotation
+      const proj = STARS.map(s => {
+        const cos = Math.cos(angle), sin = Math.sin(angle);
+        const nx = s.x / 1000, ny = s.y / 1000;
+        const rx = nx * cos - ny * sin;
+        const ry = nx * sin + ny * cos;
+        const twinkle = 0.6 + 0.4 * Math.sin(now * 0.8 + s.twinkleOffset);
+        return {
+          px: cx + rx * scale,
+          py: cy + ry * scale,
+          size: s.size,
+          alpha: twinkle
+        };
+      });
+
+      // Draw lines between nearby stars
+      for (let i = 0; i < proj.length; i++) {
+        for (let j = i + 1; j < proj.length; j++) {
+          const a = proj[i], b = proj[j];
+          const dx = a.px - b.px, dy = a.py - b.py;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          const maxDist = Math.min(W, H) * 0.25;
+          if (dist < maxDist) {
+            const lineAlpha = (1 - dist / maxDist);
+            ctx.beginPath();
+            ctx.moveTo(a.px, a.py);
+            ctx.lineTo(b.px, b.py);
+            ctx.strokeStyle = light
+              ? `rgba(80,80,140,${lineAlpha})`
+              : `rgba(160,200,255,${lineAlpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw stars
+      proj.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = light
+          ? `rgba(60,60,100,${p.alpha})`
+          : `rgba(220,235,255,${p.alpha})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const label = document.getElementById('modeLabel');
+    if (html.getAttribute('data-theme') === 'light') {
+      html.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+      label.textContent = '🌑 Dark Mode';
+    } else {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = '☀️';
+      label.textContent = '☀️ Day Mode';
+    }
+  }
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  });
+  function animateCursor() {
+    cursorX += (mouseX - cursorX) * 0.25;
+    cursorY += (mouseY - cursorY) * 0.25;
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  document.querySelectorAll('a,button,.btn,.chip,.card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+
+  // JARVIS — Local Q&A Engine (no API, no key)
+  const QA = [
+    { k: ['who are you','name','yourself','introduce','shivankar','pandey'],
+      a: "I'm JARVIS, the AI assistant for Shivankar Pandey — a SAP S/4HANA Operations specialist with 2+ years at Century Pulp & Paper, Lalkuan, Uttarakhand. He handles Sales & Logistics operations across pan-India." },
+    { k: ['role','designation','position','job','work','do','tpa','associate'],
+      a: "Shivankar is currently a TPA Associate at Century Pulp & Paper (Nov 2024–Present), managing SAP S/4HANA-based inventory, order processing, billing, and logistics for 10 outsourced QSCs across India." },
+    { k: ['sap','module','s4hana','mm','sd','wm','fi','erp'],
+      a: "Shivankar is proficient in SAP S/4HANA across MM (Materials Management), SD (Sales & Distribution), WM (Warehouse Management), and FI (Finance) modules — executing 17+ transactions daily with an average billing time of 7–8 minutes per entry." },
+    { k: ['transaction','migo','grn','va01','vf01','vl01','vkm','zsdr','movement'],
+      a: "He executes GRN via MIGO using 11+ movement types (101, 103, 105, 309, 311, 411, 413, 413E, 601, 641), processes VA01–VA03 sales orders, VL01N/VL02N deliveries, VF01/VF02 billing, VKM3 credit tracking, VF04 billing due list, and the custom ZSDR1N dispatch report." },
+    { k: ['experience','years','history','background','tenure','worked'],
+      a: "Shivankar has 2+ years at Century Pulp & Paper — starting as a Diploma Apprentice (Nov 2023–Nov 2024) in MM, SD & WM modules, then promoted to TPA Associate (Nov 2024–Present) handling full operations independently." },
+    { k: ['apprentice','diploma apprentice','training','intern'],
+      a: "During his Diploma Apprenticeship (Nov 2023–Nov 2024), Shivankar gained hands-on SAP training in live production — covering scrap handling, invoicing, warehouse management, and paper manufacturing operations across 7 machines and 5 pulp mills." },
+    { k: ['achievement','accomplishment','proud','best','notable','highlight'],
+      a: "Key achievements: contributed to the company's highest-ever recorded yearly sales figure (68,466 MT, FY25-26), managed 10 pan-India QSCs dispatching 5,000–6,000 MT/month, independently handled Tissue Retail invoicing (42+ SKUs, 112 MT peak) in ~30 minutes, maintained zero compliance escalations, and led 45+ volunteers as NSS Camp Leader." },
+    { k: ['sales','milestone','record','highest','68,466','68466'],
+      a: "Shivankar contributed to the QSC units achieving Century Pulp & Paper's highest-ever recorded yearly sales figure — 68,466 MT — recognized in a company-wide commendation from senior management in FY25-26." },
+    { k: ['qsc','outsourced','states','dispatch','network','pan india'],
+      a: "Shivankar manages 10 outsourced QSCs across Uttarakhand, Gujarat, Maharashtra, Himachal Pradesh, Punjab, Karnataka, Haryana and 3 additional locations — handling 5,000–6,000 MT of paper dispatch every month." },
+    { k: ['tissue','retail','sku','gsm','invoice','billing'],
+      a: "He independently manages Tissue Retail invoicing — 42+ SKUs ranging from 12.5 to 48 GSM, averaging 70–80 MT per month with a peak of 112 MT in FY25-26. The entire billing cycle is completed in approximately 30 minutes at zero errors." },
+    { k: ['gst','eway','e-way','compliance','tax','escalation'],
+      a: "Shivankar handles GST invoicing and e-way bill generation via SAP SD/FI integration. He has maintained a perfect compliance record — zero escalations across all dispatches, and zero stock discrepancies sustained over 18+ months." },
+    { k: ['sheeter','chm','milt','machine','operation','equipment'],
+      a: "He is trained to operate the CHM 1400 sheeter (running at 300 m/min, handling 60–550 GSM paper) and the MILT-EX sheeter — both used in paper cutting and finishing operations at the plant." },
+    { k: ['paper','pulp','manufacturing','mill','pm','machine'],
+      a: "Shivankar has working knowledge of paper manufacturing across 7 paper machines (PM#1–PM#7) and 5 pulp mills at Century Pulp & Paper. He also performs GSM quality checks in the 40–550 GSM range." },
+    { k: ['skill','technical','it','computer','excel','office','linux','windows'],
+      a: "Technical skills include SAP S/4HANA (MM, SD, WM, FI), MS Excel, MS Word, PowerPoint, Windows, Linux, and basic HTML/CSS for web development. He is also proficient with sheeter machine operations." },
+    { k: ['education','study','college','polytechnic','diploma','degree','school'],
+      a: "Education: Diploma in CS & Engineering from Govt. Polytechnic Sult, Almora (2020–2023); Diploma in CS & Web Dev from Hiltron CALC, Haldwani (2019–2020); 12th Grade (Biology) from Don Bosco Sr. Sec. School, Haldwani (2018–2019)." },
+    { k: ['nss','camp','leader','volunteer','leadership','community'],
+      a: "Shivankar served as an NSS Camp Leader, managing 45–47 volunteers across a 7-day residential camp in hilly terrain — overseeing logistics, discipline, scheduling, and community outreach activities." },
+    { k: ['contact','email','reach','connect','mail','message'],
+      a: "You can reach Shivankar at shivrajpandey37@gmail.com or connect on LinkedIn at linkedin.com/in/shivankarpandey-SAP. He is based in Haldwani, Uttarakhand." },
+    { k: ['linkedin','profile','social','online'],
+      a: "Shivankar's LinkedIn profile is available at linkedin.com/in/shivankarpandey-SAP — feel free to connect for professional opportunities or collaborations." },
+    { k: ['location','city','place','where','based','haldwani','uttarakhand','lalkuan'],
+      a: "Shivankar is based in Haldwani, Uttarakhand (PIN: 263139). His workplace, Century Pulp & Paper, is located in Lalkuan, Uttarakhand." },
+    { k: ['available','open','hire','opportunity','job','looking','new role','switch'],
+      a: "Yes — Shivankar is open to new opportunities, specifically SAP Functional Consultant roles. With 2+ years of hands-on SAP S/4HANA experience in Sales & Logistics, he is actively exploring roles where he can add operational value. Reach out at shivrajpandey37@gmail.com." },
+    { k: ['language','hindi','english','speak','communicate'],
+      a: "Shivankar communicates fluently in Hindi (native) and English (professional level) — comfortable in both formal and operational environments." },
+    { k: ['strength','best at','good at','expert','specialise','specialty'],
+      a: "His core strength is end-to-end SAP S/4HANA operations — from GRN and inventory management to billing, dispatch, and compliance. He handles complex multi-state QSC networks independently with speed and zero errors." },
+    { k: ['company','century','birla','aditya','cpp','employer','organization'],
+      a: "Century Pulp & Paper is part of the Aditya Birla Group — one of India's largest conglomerates. It is a leading manufacturer of paper, paperboard, and tissue products based in Lalkuan, Uttarakhand." },
+    { k: ['salary','ctc','package','pay','compensation'],
+      a: "Salary details are not disclosed here. For professional discussions, please reach out directly at shivrajpandey37@gmail.com." },
+    { k: ['hobby','interest','personal','free time','outside work'],
+      a: "Beyond his professional role, Shivankar has interests in web development and technology — he built this very portfolio. He also has a background in community service through NSS leadership." },
+  ];
+
+  function jarvisReply(q) {
+    const input = q.toLowerCase();
+    for (const item of QA) {
+      if (item.k.some(kw => input.includes(kw))) return item.a;
+    }
+    return "I don't have specific data on that in my current knowledge base. For detailed inquiries, please reach out to Shivankar directly at shivrajpandey37@gmail.com.";
+  }
+
+  function addMsg(role, text) {
+    const c = document.getElementById('messages');
+    const isAI = role === 'ai';
+    const d = document.createElement('div');
+    d.className = 'msg';
+    d.innerHTML = `<div class="msg-av ${role}">${isAI ? 'AI' : 'YOU'}</div><div class="msg-body"><div class="msg-who">${isAI ? 'JARVIS' : 'VISITOR'}</div><div class="msg-text">${text}</div></div>`;
+    c.appendChild(d);
+    c.scrollTop = c.scrollHeight;
+  }
+
+  function showTyping() {
+    const c = document.getElementById('messages');
+    const d = document.createElement('div');
+    d.className = 'msg'; d.id = 'typing';
+    d.innerHTML = `<div class="msg-av ai">AI</div><div class="msg-body"><div class="msg-who">JARVIS</div><div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+    c.appendChild(d); c.scrollTop = c.scrollHeight;
+  }
+
+  function sendMessage() {
+    const inp = document.getElementById('ai-input');
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    addMsg('user', text);
+    showTyping();
+    setTimeout(() => {
+      document.getElementById('typing')?.remove();
+      addMsg('ai', jarvisReply(text));
+    }, 900 + Math.random() * 400);
+  }
+
+  function sendChip(btn) {
+    document.getElementById('ai-input').value = btn.textContent;
+    sendMessage();
+  }
+</script>
+</body>
+</html>
